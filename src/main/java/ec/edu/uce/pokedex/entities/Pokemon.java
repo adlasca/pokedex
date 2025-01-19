@@ -14,6 +14,7 @@ public class Pokemon {
     private String name;
     private Integer height;
     private Integer weight;
+    private String sprite;
 
     public Pokemon() {}
 
@@ -22,6 +23,14 @@ public class Pokemon {
         this.name = name;
         this.height = height;
         this.weight = weight;
+    }
+
+    public String getSprite() {
+        return sprite;
+    }
+
+    public void setSprite(String sprite) {
+        this.sprite = sprite;
     }
 
     public Integer getId() {
