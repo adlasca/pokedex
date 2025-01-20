@@ -33,7 +33,8 @@ public class PokedexApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        pokeService.fetchAndSavePokemon();
+        //pokeService.fetchAndSavePokemon();
+        pokeService.fetchPokemonByGeneration();
 
         PokeUI pokeUI = new PokeUI(pokemonRepository);
 

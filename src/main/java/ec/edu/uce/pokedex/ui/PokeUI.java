@@ -20,106 +20,90 @@ public class PokeUI extends JFrame {
     private JTable pokemonTable;
     private DefaultTableModel tableModel;
     private JLabel spriteLabel;
-    private int currentPage = 0;  // Página actual
-    private int pageSize = 20;// Número de Pokémon por página
-    private JButton nextButton;
-    private JButton prevButton;
+    private JLabel detailsLabel;
+    private JComboBox<String> generationComboBox;
+
     private PokemonRepository pokemonRepository;
 
     public PokeUI(PokemonRepository pokemonRepository) {
         this.pokemonRepository = pokemonRepository;
-        try{
+        // Configuración de la ventana
+        setTitle("Pokedex");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-            // Configuración de la ventana
-            setTitle("Pokedex");
-            setSize(800, 600);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLayout(new BorderLayout());
+        // Configuración del combo box de generación
+        generationComboBox = new JComboBox<>(new String[]{
+                "generation-1", "generation-2", "generation-3", "generation-4",
+                "generation-5", "generation-6", "generation-7", "generation-8", "generation-9"
+        });
+        generationComboBox.addActionListener(e -> loadPokemonByGeneration((String) generationComboBox.getSelectedItem()));
+        add(generationComboBox, BorderLayout.NORTH);
 
-            // Configuración de la tabla
-            tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Altura", "Peso", "Sprite URL"}, 0);
-            pokemonTable = new JTable(tableModel);
-            JScrollPane scrollPane = new JScrollPane(pokemonTable);
-            add(scrollPane, BorderLayout.CENTER);
+        // Configuración de la tabla
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Altura", "Peso", "Sprite URL"}, 0);
+        pokemonTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(pokemonTable);
+        add(scrollPane, BorderLayout.CENTER);
 
-            // Configuración de la etiqueta para mostrar el sprite
-            spriteLabel = new JLabel();
-            spriteLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            add(spriteLabel, BorderLayout.SOUTH);
+        // Panel inferior para sprite y detalles
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        spriteLabel = new JLabel("Sprite aquí", SwingConstants.CENTER);
+        bottomPanel.add(spriteLabel, BorderLayout.CENTER);
 
-            // Listener para seleccionar una fila y mostrar el sprite
-            pokemonTable.getSelectionModel().addListSelectionListener(e -> {
-                int selectedRow = pokemonTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    String spriteUrl = (String) tableModel.getValueAt(selectedRow, 4);
-                    showSprite(spriteUrl);
-                }
-            });
+        detailsLabel = new JLabel("Detalles del Pokémon", SwingConstants.CENTER);
+        bottomPanel.add(detailsLabel, BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.SOUTH);
 
-            // Configuración de los botones para navegación de páginas
-            JPanel paginationPanel = new JPanel();
-            prevButton = new JButton("Anterior");
-            nextButton = new JButton("Siguiente");
-            paginationPanel.add(prevButton);
-            paginationPanel.add(nextButton);
-            add(paginationPanel, BorderLayout.NORTH);
-
-            prevButton.addActionListener(e -> loadPokemonDataFromDatabase(currentPage - 1));
-            nextButton.addActionListener(e -> loadPokemonDataFromDatabase(currentPage + 1));
-
-            // Cargar Pokémon desde la base de datos en un hilo separado
-            loadPokemonDataFromDatabase(currentPage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Listener para seleccionar un Pokémon
+        pokemonTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = pokemonTable.getSelectedRow();
+            if (selectedRow != -1) {
+                String spriteUrl = (String) tableModel.getValueAt(selectedRow, 4);
+                String details = String.format("ID: %s | Nombre: %s | Altura: %s | Peso: %s",
+                        tableModel.getValueAt(selectedRow, 0),
+                        tableModel.getValueAt(selectedRow, 1),
+                        tableModel.getValueAt(selectedRow, 2),
+                        tableModel.getValueAt(selectedRow, 3));
+                showSprite(spriteUrl);
+                detailsLabel.setText(details);
+            }
+        });
     }
 
-    private void loadPokemonDataFromDatabase(int page) {
-        // Establecer la página y el tamaño de la página
-        Pageable pageable = PageRequest.of(page, pageSize);
-
-        // Obtener los Pokémon desde la base de datos con paginación
-        Page<Pokemon> pokemonPage = pokemonRepository.findAll(pageable);
-
-        // Limpiar la tabla antes de agregar los nuevos Pokémon
+    private void loadPokemonByGeneration(String generation) {
+        // Limpiar la tabla
         tableModel.setRowCount(0);
 
-        // Agregar los Pokémon de la página actual a la tabla
-        List<Pokemon> pokemonList = pokemonPage.getContent();
-        pokemonList.forEach(pokemon -> {
+        // Obtener los Pokémon de la generación seleccionada
+        List<Pokemon> pokemonList = pokemonRepository.findByGeneration(generation);
+
+        // Agregar los Pokémon a la tabla
+        for (Pokemon pokemon : pokemonList) {
             tableModel.addRow(new Object[]{
                     pokemon.getId(),
                     pokemon.getName(),
                     pokemon.getHeight(),
                     pokemon.getWeight(),
-                    pokemon.getSprite()  // Suponiendo que tienes la URL del sprite guardada
+                    pokemon.getSprite()
             });
-        });
-
-        // Actualizar la página actual
-        this.currentPage = page;
-
-        // Habilitar o deshabilitar los botones de paginación según la página actual
-        if (page == 0) {
-            prevButton.setEnabled(false);
-        } else {
-            prevButton.setEnabled(true);
-        }
-
-        if (pokemonPage.hasNext()) {
-            nextButton.setEnabled(true);
-        } else {
-            nextButton.setEnabled(false);
         }
     }
 
     private void showSprite(String spriteUrl) {
         try {
-            ImageIcon spriteIcon = new ImageIcon(new URL(spriteUrl));
-            Image scaledImage = spriteIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-            spriteLabel.setIcon(new ImageIcon(scaledImage));
+            if (spriteUrl != null && !spriteUrl.isEmpty()) {
+                ImageIcon spriteIcon = new ImageIcon(new URL(spriteUrl));
+                Image scaledImage = spriteIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                spriteLabel.setIcon(new ImageIcon(scaledImage));
+            } else {
+                spriteLabel.setIcon(null);
+                spriteLabel.setText("No hay sprite disponible");
+            }
         } catch (Exception e) {
-            System.err.println("Error al cargar la imagen del sprite: " + e.getMessage());
+            spriteLabel.setIcon(null);
+            spriteLabel.setText("Error al cargar la imagen del sprite");
         }
     }
 }

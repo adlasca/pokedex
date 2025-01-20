@@ -1,7 +1,6 @@
 package ec.edu.uce.pokedex.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -15,14 +14,29 @@ public class Pokemon {
     private Integer height;
     private Integer weight;
     private String sprite;
+    @ManyToMany(cascade = CascadeType.PERSIST)  // Se agrega la cascada para guardar los tipos asociados
+    @JoinTable(
+            name = "pokemon_type",
+            joinColumns = @JoinColumn(name = "pokemon_id"),
+            inverseJoinColumns = @JoinColumn(name = "type_id")
+    )
+    private List<Type> type;
+    private  String generation;
 
-    public Pokemon() {}
+    public String getGeneration() {
+        return generation;
+    }
 
-    public Pokemon(Integer id, String name, Integer height, Integer weight) {
-        this.id = id;
-        this.name = name;
-        this.height = height;
-        this.weight = weight;
+    public void setGeneration(String generation) {
+        this.generation = generation;
+    }
+
+    public List<Type> getType() {
+        return type;
+    }
+
+    public void setType(List<Type> type) {
+        this.type = type;
     }
 
     public String getSprite() {

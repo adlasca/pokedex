@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -29,8 +31,6 @@ public class PokeService {
 //10001--10277 __1025
         pokemonIds.parallel().forEach(id->{
             try {
-                URL url = new URL("https://pokeapi.co/api/v2/");
-
                 PokeApiResponse response = webClient.get()
                         .uri(uriBuilder -> uriBuilder.path("pokemon/{id}").build(id))
                         .retrieve()
@@ -44,6 +44,7 @@ public class PokeService {
                     pokemon.setName(response.getName());
                     pokemon.setHeight(response.getHeight());
                     pokemon.setWeight(response.getWeight());
+                    pokemon.setType(response.getTypes());
 
                     // Obtener la URL del sprite
                     String spriteUrl = response.getSprites().getFrontDefault();
@@ -70,5 +71,69 @@ public class PokeService {
 
     }
 
+    public void fetchPokemonByGeneration() {
+        IntStream.rangeClosed(1, 9).parallel().forEach(generationId -> {
+            String generationName = "generation-" + generationId;
+
+            try {
+                // Llamar al endpoint de generación
+                GenerationResponse response = webClient.get()
+                        .uri(uriBuilder -> uriBuilder.path("generation/{id}").build(generationId))
+                        .retrieve()
+                        .bodyToMono(GenerationResponse.class)
+                        .block();
+
+                if (response != null && response.getPokemonSpecies() != null) {
+                    // Lista para almacenar todos los Pokémon de esta generación
+                    List<Pokemon> pokemonList = new ArrayList<>();
+
+                    for (var species : response.getPokemonSpecies()) {
+                        try {
+                            String pokemonName = species.getName();
+                            int pokemonId = extractIdFromUrl(species.getUrl());
+
+                            // Obtener los datos del Pokémon
+                            PokeApiResponse pokemonData = webClient.get()
+                                    .uri(uriBuilder -> uriBuilder.path("pokemon/{id}").build(pokemonId))
+                                    .retrieve()
+                                    .bodyToMono(PokeApiResponse.class)
+                                    .block();
+
+                            if (pokemonData != null) {
+                                // Crear el objeto Pokémon
+                                Pokemon pokemon = new Pokemon();
+                                pokemon.setId(pokemonId);
+                                pokemon.setName(pokemonData.getName());
+                                pokemon.setHeight(pokemonData.getHeight());
+                                pokemon.setWeight(pokemonData.getWeight());
+                                pokemon.setSprite(pokemonData.getSprites().getFrontDefault());
+                                pokemon.setType(pokemonData.getTypes());
+                                pokemon.setGeneration(generationName);
+
+                                // Agregar a la lista
+                                pokemonList.add(pokemon);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error al procesar Pokémon: " + species.getName());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // Guardar todos los Pokémon de esta generación en un solo paso
+                    synchronized (pokemonRepository) {
+                        pokemonRepository.saveAll(pokemonList);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error al procesar la generación: " + generationId);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private int extractIdFromUrl(String url) {
+        String[] parts = url.split("/");
+        return Integer.parseInt(parts[parts.length - 1]);
+    }
 
 }

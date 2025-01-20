@@ -12,6 +12,8 @@ public class PokedexUI extends JFrame {
     private JTextField textField1;
     private JTextField textField2;
     private JTextField textField3;
+    private JList list1;
+    private JTable table1;
 
     public PokedexUI() {
         Buscador.addInputMethodListener(new InputMethodListener() {

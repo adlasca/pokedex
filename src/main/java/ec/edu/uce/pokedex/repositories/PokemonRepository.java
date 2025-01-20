@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface PokemonRepository extends PagingAndSortingRepository<Pokemon, Integer>, JpaRepository<Pokemon, Integer> {
-
+    List<Pokemon> findByGeneration(String generation);
     List<Pokemon> findByName(String name);
 }

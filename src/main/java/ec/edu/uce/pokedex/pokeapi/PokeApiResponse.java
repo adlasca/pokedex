@@ -1,6 +1,9 @@
 package ec.edu.uce.pokedex.pokeapi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.edu.uce.pokedex.entities.Type;
+
+import java.util.List;
 
 public class PokeApiResponse {
 
@@ -9,10 +12,18 @@ public class PokeApiResponse {
     private int weight;
     private int height;
     private Sprites sprites;
-
+    private List<Type> types;
 
     // Getters y Setters
 
+
+    public List<Type> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<Type> types) {
+        this.types = types;
+    }
 
     public Integer getId() {
         return id;
