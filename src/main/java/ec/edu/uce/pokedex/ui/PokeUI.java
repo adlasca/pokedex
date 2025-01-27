@@ -28,6 +28,7 @@ public class PokeUI extends JFrame {
     private JLabel detailsLabel;
     private ImageIcon pokedexIcon;
     private JLabel pokedexLabel;
+    private JComboBox<String> typeComboBox;
 
     public PokeUI(PokemonRepository pokemonRepository) {
         this.pokemonRepository = pokemonRepository;
@@ -74,17 +75,35 @@ public class PokeUI extends JFrame {
     private JPanel createPokemonListPanel() {
         JPanel pokemonListPanel = new JPanel(new BorderLayout());
 
-        // Configuración del combo box de generación
+        JPanel panel = new JPanel();
+
         generationComboBox = new JComboBox<>(new String[]{
                 "generation-1", "generation-2", "generation-3", "generation-4",
                 "generation-5", "generation-6", "generation-7", "generation-8", "generation-9"
         });
         generationComboBox.addActionListener(e -> loadPokemonByGeneration((String) generationComboBox.getSelectedItem()));
-        pokemonListPanel.add(generationComboBox, BorderLayout.NORTH);
 
-        // Configuración de la tabla
+        typeComboBox = new JComboBox<>(new String[]{
+                "normal", "fighting", "flying", "poison", "ground", "rock",
+                "bug", "ghost", "steel", "fire", "water", "grass", "electric",
+                "psychic", "ice", "dragon", "dark", "fairy", "stellar", "unknown"
+        });
+
+        typeComboBox.addActionListener(e -> loadPokemonByType((String) typeComboBox.getSelectedItem()));
+
+        panel.add(new JLabel("Generación:"));
+        panel.add(generationComboBox);
+        panel.add(new JLabel("Tipo:"));
+        panel.add(typeComboBox);
+        panel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,2));
+
+        panel.setBackground(Color.PINK);
+        add(panel, BorderLayout.NORTH);
+        pokemonListPanel.add(panel, BorderLayout.NORTH);
+
         tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Tipo"}, 0);
         pokemonTable = new JTable(tableModel);
+        pokemonListPanel.setBackground(Color.DARK_GRAY);
         JScrollPane scrollPane = new JScrollPane(pokemonTable);
         pokemonListPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -98,10 +117,12 @@ public class PokeUI extends JFrame {
         detailsLabel = new JLabel("Detalles del Pokémon", SwingConstants.CENTER);
         pokedexIcon = new ImageIcon("images/pokedex_logo.png");
         pokedexLabel = new JLabel(pokedexIcon);
+
         Image pokedexImage = pokedexIcon.getImage().getScaledInstance(300, 150, Image.SCALE_SMOOTH);
         pokedexLabel.setIcon(new ImageIcon(pokedexImage));
+        pokedexLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,2));
 
-        spriteLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,3));
+        spriteLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,2));
         detailsPanel.add(spriteLabel, BorderLayout.CENTER);
         detailsPanel.add(detailsLabel, BorderLayout.NORTH);
         detailsPanel.add(pokedexLabel, BorderLayout.SOUTH);
@@ -124,6 +145,20 @@ public class PokeUI extends JFrame {
     private void loadPokemonByGeneration(String generation) {
         tableModel.setRowCount(0);
         List<Pokemon> pokemonList = pokemonRepository.findByGeneration(generation);
+        for (Pokemon pokemon : pokemonList) {
+            tableModel.addRow(new Object[]{
+                    pokemon.getId(),
+                    pokemon.getName(),
+                    getPokemonTypesAsString(pokemon)
+            });
+        }
+    }
+
+    private void loadPokemonByType(String type) {
+        tableModel.setRowCount(0);
+
+        List<Pokemon> pokemonList = pokemonRepository.findByTypeName(type);
+
         for (Pokemon pokemon : pokemonList) {
             tableModel.addRow(new Object[]{
                     pokemon.getId(),
@@ -170,6 +205,7 @@ public class PokeUI extends JFrame {
             );
 
             detailsLabel.setText(details);
+            detailsLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,2));
             showPokemonSprite(pokemon.getSprite());
         }
     }
@@ -180,6 +216,7 @@ public class PokeUI extends JFrame {
                 ImageIcon spriteIcon = new ImageIcon(new URL(spriteUrl));
                 Image scaledImage = spriteIcon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
                 spriteLabel.setIcon(new ImageIcon(scaledImage));
+                spriteLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY,2));
             } else {
                 spriteLabel.setIcon(null);
                 spriteLabel.setText("No hay sprite disponible");
