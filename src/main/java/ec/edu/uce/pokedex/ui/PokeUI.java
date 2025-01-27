@@ -86,7 +86,7 @@ public class PokeUI extends JFrame {
         typeComboBox = new JComboBox<>(new String[]{
                 "normal", "fighting", "flying", "poison", "ground", "rock",
                 "bug", "ghost", "steel", "fire", "water", "grass", "electric",
-                "psychic", "ice", "dragon", "dark", "fairy", "stellar", "unknown"
+                "psychic", "ice", "dragon", "dark", "fairy"
         });
 
         typeComboBox.addActionListener(e -> loadPokemonByType((String) typeComboBox.getSelectedItem()));
