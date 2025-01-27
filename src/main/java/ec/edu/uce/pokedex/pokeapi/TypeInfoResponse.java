@@ -1,6 +1,7 @@
-package ec.edu.uce.pokedex.entities;
+package ec.edu.uce.pokedex.pokeapi;
 
-public class PokemonSpecies {
+/// Clase que obtiene el nombre y el url del campo types que contiene cada pokemon en la API parte de TypeSlot
+public class TypeInfoResponse {
     private String name;
     private String url;
 

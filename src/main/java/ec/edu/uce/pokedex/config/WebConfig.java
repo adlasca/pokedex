@@ -6,6 +6,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebConfig {
+
+    /// Uso de WebClient de spring para las solicitudes HTTP
+    /// Contiene la configuracion inicial, como la url principal de la API y un aumento de tamaño en la memoria para guardar mas datos
 @Bean
     public WebClient webClient(WebClient.Builder builder) {
     return builder

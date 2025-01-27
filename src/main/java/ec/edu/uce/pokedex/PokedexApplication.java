@@ -3,7 +3,6 @@ package ec.edu.uce.pokedex;
 import ec.edu.uce.pokedex.pokeapi.PokeService;
 import ec.edu.uce.pokedex.repositories.PokemonRepository;
 import ec.edu.uce.pokedex.ui.PokeUI;
-import ec.edu.uce.pokedex.ui.PokedexUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +19,6 @@ public class PokedexApplication implements CommandLineRunner {
     @Autowired
     private PokemonRepository pokemonRepository;
 
-
     public static void main(String[] args) {
         if (!GraphicsEnvironment.isHeadless()) {
             // Crear la interfaz gráfica si no estamos en un entorno headless
@@ -33,13 +31,11 @@ public class PokedexApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //pokeService.fetchAndSavePokemon();
         pokeService.fetchPokemonByGeneration();
 
         PokeUI pokeUI = new PokeUI(pokemonRepository);
 
         SwingUtilities.invokeLater(() -> {
-            // Aquí se configura la visibilidad de la UI
             pokeUI.setVisible(true);
         });
     }

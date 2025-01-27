@@ -5,12 +5,15 @@ import ec.edu.uce.pokedex.entities.PokemonSpecies;
 
 import java.util.List;
 
+/// CLASE QUE FUNCIONA PARA OBTENER EL NOMBRE DE LA GENERACION, LAS ESPECIES DE POKÉMON Y LOS TIPOS
+/// QUE SE ENCUENTRAN EN CADA GENERACION
+/// LO QUE EN LA API CORRESPONDE A:  {"name":"generation","pokemon_species":[{...}],"types":[{...}]}
 public class GenerationResponse {
     private String name;
     @JsonProperty("pokemon_species")
     private List<PokemonSpecies> pokemon_species;
 
-    // Getters y setters
+    private List<TypeTypes> types;
 
     public String getName() {
         return name;
@@ -28,4 +31,11 @@ public class GenerationResponse {
         this.pokemon_species = pokemon_species;
     }
 
+    public List<TypeTypes> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<TypeTypes> types) {
+        this.types = types;
+    }
 }

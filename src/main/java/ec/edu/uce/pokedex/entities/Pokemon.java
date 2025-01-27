@@ -21,7 +21,16 @@ public class Pokemon {
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
     private List<Type> type;
-    private  String generation;
+    private StringBuilder types;
+    private String generation;
+
+    public StringBuilder getTypes() {
+      return types;
+    }
+
+    public void setTypes(StringBuilder types) {
+        this.types = types;
+    }
 
     public String getGeneration() {
         return generation;
@@ -36,6 +45,7 @@ public class Pokemon {
     }
 
     public void setType(List<Type> type) {
+
         this.type = type;
     }
 

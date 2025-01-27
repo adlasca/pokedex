@@ -1,6 +1,7 @@
-package ec.edu.uce.pokedex.entities;
+package ec.edu.uce.pokedex.pokeapi;
 
-public class PokemonSpecies {
+/// Clase que obtiene  el nombre y el url de los tipos que contiene en cada generacion
+public class TypeTypes {
     private String name;
     private String url;
 

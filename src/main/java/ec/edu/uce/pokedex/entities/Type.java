@@ -3,33 +3,24 @@ package ec.edu.uce.pokedex.entities;
 import jakarta.persistence.*;
 
 import java.util.List;
-
+/// Tabla que contiene todos los tipos de pokemon
 @Entity
 public class Type {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "type")
     private List<Pokemon> pokemons;
 
-    // Constructor para inicializar el nombre
-    public Type(String name) {
-        this.name = name;
-    }
-
-    // Constructor vacío para JPA
-    public Type() {}
-
-    // Getters and Setters
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

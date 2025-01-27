@@ -5,23 +5,22 @@ import ec.edu.uce.pokedex.entities.Type;
 
 import java.util.List;
 
-public class PokeApiResponse {
+/// Clase que funciona para obtener los datos de cada pokemon en la API
+
+public class PokeApiResponse  {
 
     private Integer id;
     private String name;
     private int weight;
     private int height;
-    private Sprites sprites;
-    private List<Type> types;
+    private SpriteResponse sprites;
+    private List<TypeSlot> types;
 
-    // Getters y Setters
-
-
-    public List<Type> getTypes() {
+    public List<TypeSlot> getTypes() {
         return types;
     }
 
-    public void setTypes(List<Type> types) {
+    public void setTypes(List<TypeSlot> types) {
         this.types = types;
     }
 
@@ -33,11 +32,11 @@ public class PokeApiResponse {
         this.id = id;
     }
 
-    public Sprites getSprites() {
+    public SpriteResponse getSprites() {
         return sprites;
     }
 
-    public void setSprites(Sprites sprites) {
+    public void setSprites(SpriteResponse sprites) {
         this.sprites = sprites;
     }
 
@@ -65,17 +64,4 @@ public class PokeApiResponse {
         this.height = height;
     }
 
-    // Clase interna para manejar sprites
-    public static class Sprites {
-        @JsonProperty("front_default")
-        private String frontDefault;
-
-        public String getFrontDefault() {
-            return frontDefault;
-        }
-
-        public void setFrontDefault(String frontDefault) {
-            this.frontDefault = frontDefault;
-        }
-    }
 }
