@@ -1,7 +1,6 @@
 package ec.edu.uce.pokedex.pokeapi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.edu.uce.pokedex.entities.PokemonSpecies;
 
 import java.util.List;
 

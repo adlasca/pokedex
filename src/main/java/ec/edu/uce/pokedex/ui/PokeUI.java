@@ -115,7 +115,7 @@ public class PokeUI extends JFrame {
         JPanel detailsPanel = new JPanel(new BorderLayout());
         spriteLabel = new JLabel("", SwingConstants.CENTER);
         detailsLabel = new JLabel("Detalles del Pokémon", SwingConstants.CENTER);
-        pokedexIcon = new ImageIcon("images/pokedex_logo.png");
+        pokedexIcon = new ImageIcon("src/main/resources/templates/images/pokedex_logo.png");
         pokedexLabel = new JLabel(pokedexIcon);
 
         Image pokedexImage = pokedexIcon.getImage().getScaledInstance(300, 150, Image.SCALE_SMOOTH);
@@ -156,9 +156,7 @@ public class PokeUI extends JFrame {
 
     private void loadPokemonByType(String type) {
         tableModel.setRowCount(0);
-
         List<Pokemon> pokemonList = pokemonRepository.findByTypeName(type);
-
         for (Pokemon pokemon : pokemonList) {
             tableModel.addRow(new Object[]{
                     pokemon.getId(),

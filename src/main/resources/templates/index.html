@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styless.css">
+    <title>Pokedex</title>
+</head>
+<body>
+<header>
+    <img src="images/pokedex_logo.png" alt="pokedex logo" >
+    <p>Bienvenido a la Pokedex</p>
+    <form method="get" action="/">
+        <input type="search" name="search" th:value="${searchQuery}" placeholder="Buscar Pokemon...">
+        <button type="submit">Buscar</button>
+    </form>
+    <form method="get" action="/">
+        <select name ="generation">
+            <option value="">Todas las generaciones</option>
+            <option th:each="t : ${generation}" th:value="${t}" th:text="${t}" th:selected="${t==selectedGeneration}"></option>
+        </select>
+        <select name ="type">
+            <option value="">Todos los tipos</option>
+            <option th:each="i: ${type}" th:value="${i}" th:text="${i}" th:selected="${i == selectedType}"></option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+</header>
+    <main>
+        <div class ="grid-container">
+            <div class ="pokemon-card" th:each="pokemon : ${pokemonList}">
+                <h3 th:text="${pokemon.name.toUpperCase()}"></h3>
+                <img th:src="${pokemon.sprite}" width="200" height="200"alt="Pokemon Image">
+                <p><strong>Weight:</strong> <span th:text="${pokemon.weight}"> </span></p>
+                <p><strong>Height:</strong> <span th:text="${pokemon.height}"> </span></p>
+            </div>
+        </div>
+        <!--Paginacion-->
+        <th:block th:with="
+    startPage=${currentPage != null and totalPages != null ? (currentPage - 2 > 0 ? currentPage - 2 : 1) : 1},
+    endPage=${currentPage != null and totalPages != null ? (currentPage + 2 < totalPages ? currentPage + 2 : totalPages) : 1}">
+
+            <div class="pagination">
+                <a th:if="${currentPage > 1}" th:href="@{/(page=${currentPage - 1}, size=${pageSize})}">Anterior</a>
+
+                <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                   th:href="@{/(page=${i}, size=${pageSize})}"
+                   th:class="${i == currentPage} ? 'active' : ''">
+                    [[${i}]]
+                </a>
+
+                <a th:if="${currentPage < totalPages}" th:href="@{/(page=${currentPage + 1}, size=${pageSize})}">Siguiente</a>
+            </div>
+
+        </th:block>
+    </main>
+
+</body>
+</html>

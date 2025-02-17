@@ -18,6 +18,7 @@ public interface PokemonRepository extends PagingAndSortingRepository<Pokemon, I
     List<Pokemon> findByName(String name);
 
     Pokemon findById(int id);
+
     @Query("SELECT p FROM Pokemon p JOIN FETCH p.type t WHERE t.name = :type")
     List<Pokemon> findByTypeName(String type);
 }
